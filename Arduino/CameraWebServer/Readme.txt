@@ -1,0 +1,1 @@
+燒錄選項要注意 https://www.youtube.com/watch?v=AUiCxZzAnxc 	5:09開始
