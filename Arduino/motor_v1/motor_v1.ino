@@ -35,12 +35,19 @@ void setup() {
 
 void loop() {
   // Move the DC motor forward at maximum speed
+
+ while (dutyCycle <= 255){
+   ledcWrite(ena, dutyCycle);  
+   Serial.print("Forward with duty cycle: ");
+   Serial.println(dutyCycle);
+   dutyCycle = dutyCycle + 5;
+
   Serial.println("往前");
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  delay(2000);
+  delay(500);
 
   // Stop the DC motor
   Serial.println("往前_停");
@@ -56,7 +63,7 @@ void loop() {
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  delay(2000);
+  delay(500);
 
   // Stop the DC motor
   Serial.println("倒退_停");
@@ -67,15 +74,16 @@ void loop() {
   delay(1000);
  
   //速度
-  // Move DC motor forward with increasing speed
-//  digitalWrite(in1, HIGH);
-//  digitalWrite(in2, LOW);
-//  digitalWrite(in3, HIGH);
-//  digitalWrite(in4, LOW);
-//
-//  
-//  while (dutyCycle <= 255){
-//    ledcWrite(ena, dutyCycle);  
+ //Move DC motor forward with increasing speed
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+
+   delay(500);
+ }
+//   while (dutyCycle <= 255){
+//    ledcWrite(enb, dutyCycle);  
 //    Serial.print("Forward with duty cycle: ");
 //    Serial.println(dutyCycle);
 //    dutyCycle = dutyCycle + 5;
