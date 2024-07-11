@@ -15,7 +15,7 @@ const byte RIGHT2 = 14;
 const byte RIGHT_PWM = 12;
 
 // 設定PWM輸出值（註：FA-130馬達供電不要超過3v）
-byte motorSpeed = 200;
+byte motorSpeed = 255;
 
 void forward() {  // 馬達轉向：前進
   Serial.println("往前");
