@@ -1,0 +1,51 @@
+[
+    {
+        "id": "04caebcaffc77a07",
+        "type": "ui_button",
+        "z": "924c3ea678583ea4",
+        "name": "",
+        "group": "87cfaf7f1a64e1c6",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "停",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 250,
+        "y": 580,
+        "wires": [
+            [
+                "b50f2c6f502b8e29",
+                "a63531312362c8a4"
+            ]
+        ]
+    },
+    {
+        "id": "87cfaf7f1a64e1c6",
+        "type": "ui_group",
+        "name": "開關001",
+        "tab": "9e253195.a496a",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9e253195.a496a",
+        "type": "ui_tab",
+        "name": "Tab 1",
+        "icon": "dashboard",
+        "order": 4,
+        "disabled": false,
+        "hidden": false
+    }
+]
