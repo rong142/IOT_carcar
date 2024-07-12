@@ -18,6 +18,10 @@ const byte RIGHT1 = 13;
 const byte RIGHT2 = 14;
 const byte RIGHT_PWM = 12;
 
+// 設定PWM輸出值（註：FA-130馬達供電不要超過3v）
+byte motorSpeed = 255;
+
+
 // ------ 以下修改成你自己的WiFi帳號密碼 ------
 char ssid[] = "C220MIS";
 char password[] = "misc220c220";
@@ -43,8 +47,7 @@ char* MQTTSubTopic5 = "car/carcar/stop";
 WiFiClient WifiClient;
 PubSubClient MQTTClient(WifiClient);
 
-// 設定PWM輸出值（註：FA-130馬達供電不要超過3v）
-byte motorSpeed = 200;
+
 
 void forward() {  // 馬達轉向：前進
   Serial.println("往前");
@@ -52,7 +55,10 @@ void forward() {  // 馬達轉向：前進
   digitalWrite(LEFT2, LOW);
   digitalWrite(RIGHT1, HIGH);
   digitalWrite(RIGHT2, LOW);
- 
+
+  analogWrite(LEFT_PWM, motorSpeed);
+  analogWrite(RIGHT_PWM, motorSpeed);
+
   MQTTClient.publish(MQTTSubTopic2, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic3, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic4, String(0).c_str());
@@ -65,8 +71,11 @@ void backward() {  // 馬達轉向：後退
   digitalWrite(LEFT2, HIGH);
   digitalWrite(RIGHT1, LOW);
   digitalWrite(RIGHT2, HIGH);
-  MQTTClient.publish(MQTTSubTopic1, String(0).c_str());
 
+  analogWrite(LEFT_PWM, motorSpeed);
+  analogWrite(RIGHT_PWM, motorSpeed);
+
+  MQTTClient.publish(MQTTSubTopic1, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic3, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic4, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic5, String(0).c_str());
@@ -78,9 +87,12 @@ void turnLeft() {  // 馬達轉向：左轉
   digitalWrite(LEFT2, HIGH);
   digitalWrite(RIGHT1, HIGH);
   digitalWrite(RIGHT2, LOW);
+
+  analogWrite(LEFT_PWM, motorSpeed);
+  analogWrite(RIGHT_PWM, motorSpeed);
+
   MQTTClient.publish(MQTTSubTopic1, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic2, String(0).c_str());
- 
   MQTTClient.publish(MQTTSubTopic4, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic5, String(0).c_str());
 }
@@ -91,10 +103,13 @@ void turnRight() {  // 馬達轉向：右轉
   digitalWrite(LEFT2, LOW);
   digitalWrite(RIGHT1, LOW);
   digitalWrite(RIGHT2, HIGH);
+
+  analogWrite(LEFT_PWM, motorSpeed);
+  analogWrite(RIGHT_PWM, motorSpeed);
+
   MQTTClient.publish(MQTTSubTopic1, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic2, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic3, String(0).c_str());
-
   MQTTClient.publish(MQTTSubTopic5, String(0).c_str());
 }
 
@@ -104,24 +119,28 @@ void stop() {  // 停止
   digitalWrite(LEFT2, LOW);
   digitalWrite(RIGHT1, LOW);
   digitalWrite(RIGHT2, LOW);
+
+  analogWrite(LEFT_PWM, 0);
+  analogWrite(RIGHT_PWM, 0);
+
   MQTTClient.publish(MQTTSubTopic1, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic2, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic3, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic4, String(0).c_str());
 
- 
+
 }
 
 //開始WiFi連線
 void WifiConnecte() {
   //開始WiFi連線
   WiFi.begin(ssid, password);
- int tryCount=0;
- 
+  int tryCount = 0;
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-    if (tryCount ++ >=20){
+    if (tryCount ++ >= 20) {
       ESP.restart();
     }
   }
@@ -146,7 +165,7 @@ void MQTTConnecte() {
       MQTTClient.subscribe(MQTTSubTopic3);
       MQTTClient.subscribe(MQTTSubTopic4);
       MQTTClient.subscribe(MQTTSubTopic5);
-     
+
 
     } else {
       //若連線不成功，則顯示錯誤訊息，並重新連線
@@ -166,7 +185,7 @@ void setup() {
   pinMode(RIGHT1, OUTPUT);
   pinMode(RIGHT2, OUTPUT);
   pinMode(RIGHT_PWM, OUTPUT);
-   //開始WiFi連線
+  //開始WiFi連線
   WifiConnecte();
 
   //開始MQTT連線
@@ -174,12 +193,12 @@ void setup() {
 }
 
 void loop() {
-    //如果WiFi連線中斷，則重啟WiFi連線
+  //如果WiFi連線中斷，則重啟WiFi連線
   if (WiFi.status() != WL_CONNECTED) WifiConnecte();
 
   //如果MQTT連線中斷，則重啟MQTT連線
   if (!MQTTClient.connected())  MQTTConnecte();
- 
+
   MQTTClient.loop();//更新訂閱狀態
 }
 
@@ -199,12 +218,12 @@ void MQTTCallback(char* topic, byte* payload, unsigned int length) {
     if (payloadString == "1") forward();
     //if (payloadString == "0") stop();
   }
-    if (strcmp(topic, MQTTSubTopic2) == 0) {
+  if (strcmp(topic, MQTTSubTopic2) == 0) {
     Serial.println("往後：" + payloadString);
     if (payloadString == "1") backward();
     //if (payloadString == "0") stop();
   }
-    if (strcmp(topic, MQTTSubTopic3) == 0) {
+  if (strcmp(topic, MQTTSubTopic3) == 0) {
     Serial.println("左轉：" + payloadString);
     if (payloadString == "1") turnLeft();
     //if (payloadString == "0") stop();
