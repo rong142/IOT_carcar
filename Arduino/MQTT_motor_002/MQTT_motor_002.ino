@@ -19,7 +19,7 @@ const byte RIGHT2 = 14;
 const byte RIGHT_PWM = 12;
 
 // 設定PWM輸出值（註：FA-130馬達供電不要超過3v）
-byte motorSpeed = 300;
+byte motorSpeed = 255;
 
 
 // ------ 以下修改成你自己的WiFi帳號密碼 ------
