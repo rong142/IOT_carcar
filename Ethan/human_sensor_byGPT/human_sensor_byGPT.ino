@@ -15,7 +15,7 @@ unsigned long buttonPressedMillis = 0; // Time when button was pressed
 const long intervalMotion = 1000; // Interval for motion detection
 const long intervalLED = 250; // Interval for LEDs
 const long intervalUltrasonic = 50; // Interval for ultrasonic sensor
-const long intervalBuzzer = 100; // Interval for buzzer
+const long intervalBuzzer = 250; // Interval for buzzer
 const long intervalPrint = 250; // Interval for printing CMValue
 const long delayStartLEDandUltrasonic = 3000; // Delay before starting LEDs and ultrasonic sensor (3 seconds)
 const long durationLEDandUltrasonic = 6000; // Duration to keep LEDs and ultrasonic sensor on (6 seconds)
@@ -57,8 +57,6 @@ void loop() {
         if (currentMillis - motionDetectedMillis < delayStartLEDandUltrasonic) {
           motionDetected = false;
           Serial.println("無人經過");
-          // Removed the line:
-          // motionEndedMillis = currentMillis; // Record the time when motion ends
         } else {
           motionEndedMillis = currentMillis; // Record the time when motion is no longer detected
           Serial.println("無人經過");
@@ -110,7 +108,7 @@ void loop() {
       CMValue = EchoTime / 29.4 / 2; //將時間轉換成距離
     }
 
-    // Sound buzzer based on distance every 100 ms
+    // Sound buzzer based on distance every 250 ms
     if (currentMillis - previousMillisBuzzer >= intervalBuzzer) {
       previousMillisBuzzer = currentMillis;
       if (CMValue > 200) {
