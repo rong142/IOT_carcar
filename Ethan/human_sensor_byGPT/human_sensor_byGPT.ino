@@ -53,10 +53,18 @@ void loop() {
       Serial.println("有人經過");
     } else {
       if (motionDetected) {
-        motionDetected = false;
-        motionEndedMillis = currentMillis; // Record the time when motion is no longer detected
+        // Only consider the motion ended if it lasted for less than 3 seconds
+        if (currentMillis - motionDetectedMillis < delayStartLEDandUltrasonic) {
+          motionDetected = false;
+          Serial.println("無人經過");
+          // Removed the line:
+          // motionEndedMillis = currentMillis; // Record the time when motion ends
+        } else {
+          motionEndedMillis = currentMillis; // Record the time when motion is no longer detected
+          Serial.println("無人經過");
+          motionDetected = false; // Added this line to reset the motionDetected flag
+        }
       }
-      Serial.println("無人經過");
     }
   }
 
@@ -69,7 +77,7 @@ void loop() {
     buttonPressed = false;
   }
 
-  // Check if motion is detected or button was pressed within the last 10 seconds
+  // Check if motion was detected for over 3 seconds, or if button was pressed within the last 10 seconds
   bool shouldOperateLEDsAndUltrasonic = false;
 
   if (buttonPressed ||
@@ -121,10 +129,12 @@ void loop() {
     }
   } else {
     // Ensure LEDs are turned off after the duration ends
-    if (currentMillis - motionEndedMillis >= durationLEDandUltrasonic &&
-        currentMillis - buttonPressedMillis >= durationButtonLEDandUltrasonic) {
+    if (!motionDetected &&
+        (currentMillis - motionEndedMillis >= durationLEDandUltrasonic) ||
+        (currentMillis - buttonPressedMillis >= durationButtonLEDandUltrasonic)) {
       digitalWrite(15, LOW);
       digitalWrite(4, LOW);
+      ledState = false;
     }
   }
 
