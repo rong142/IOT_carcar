@@ -114,9 +114,9 @@ void loop() {
       if (CMValue > 200) {
         tone(buzzer, 0, 0); // No sound if distance is greater than 200 cm
       } else if (CMValue <= 200 && CMValue > 100) {
-        tone(buzzer, 253, 100); //警告距離紅燈
+        tone(buzzer, 523, 100); //注意距離
       } else {
-        tone(buzzer, 523, 100); //注意距離黃燈
+        tone(buzzer, 988, 100); //警告距離
       }
     }
 
