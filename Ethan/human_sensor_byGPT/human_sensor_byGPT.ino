@@ -1,21 +1,25 @@
 int Trig = 12; //發出聲波腳位
 int Echo = 14; //接收聲波腳位
 int buzzer = 5; //蜂鳴器
-int buttonPin = 23; //按鈕腳位
+int buttonPin = 18; //按鈕腳位
 
 unsigned long previousMillisMotion = 0;
 unsigned long previousMillisLED = 0;
 unsigned long previousMillisUltrasonic = 0;
 unsigned long previousMillisBuzzer = 0;
+unsigned long previousMillisPrint = 0; // Time for printing CMValue
 unsigned long motionDetectedMillis = 0; // Time when motion was first detected
 unsigned long motionEndedMillis = 0; // Time when motion was last detected
+unsigned long buttonPressedMillis = 0; // Time when button was pressed
 
 const long intervalMotion = 1000; // Interval for motion detection
 const long intervalLED = 250; // Interval for LEDs
 const long intervalUltrasonic = 50; // Interval for ultrasonic sensor
 const long intervalBuzzer = 100; // Interval for buzzer
+const long intervalPrint = 250; // Interval for printing CMValue
 const long delayStartLEDandUltrasonic = 3000; // Delay before starting LEDs and ultrasonic sensor (3 seconds)
-const long durationLEDandUltrasonic = 10000; // Duration to keep LEDs and ultrasonic sensor on (10 seconds)
+const long durationLEDandUltrasonic = 6000; // Duration to keep LEDs and ultrasonic sensor on (6 seconds)
+const long durationButtonLEDandUltrasonic = 10000; // Duration to keep LEDs and ultrasonic sensor on after button press (10 seconds)
 
 bool motionDetected = false;
 bool buttonPressed = false;
@@ -38,72 +42,99 @@ void loop() {
   int value = digitalRead(17);
   int buttonState = digitalRead(buttonPin);
 
-  // Motion detection or button press every 1000 ms
+  // Motion detection every 1000 ms
   if (currentMillis - previousMillisMotion >= intervalMotion) {
     previousMillisMotion = currentMillis;
     if (value == HIGH) {
       if (!motionDetected) {
         motionDetected = true;
         motionDetectedMillis = currentMillis; // Record the time when motion is first detected
-      } Serial.println("有人經過");
+      }
+      Serial.println("有人經過");
     } else {
       if (motionDetected) {
-        motionDetected = false;
-        motionEndedMillis = currentMillis; // Record the time when motion is no longer detected
-      } Serial.println("無人經過");
-    }
-
-    if (buttonState == HIGH) {
-      buttonPressed = true;
-      Serial.println("按鈕按下");
-    } else {
-      buttonPressed = false;
-    }
-  }
-
-  if (motionDetected || buttonPressed || (currentMillis - motionEndedMillis < durationLEDandUltrasonic)) {
-    unsigned long elapsedMillis = currentMillis - motionDetectedMillis;
-
-    if (buttonPressed || (motionDetected && elapsedMillis >= delayStartLEDandUltrasonic) || (currentMillis - motionEndedMillis < durationLEDandUltrasonic)) {
-      // Toggle LEDs every 250 ms
-      if (currentMillis - previousMillisLED >= intervalLED) {
-        previousMillisLED = currentMillis;
-        ledState = !ledState;
-        Serial.print("LED State: ");
-        Serial.println(ledState);
-        digitalWrite(15, ledState ? HIGH : LOW);
-        digitalWrite(4, ledState ? LOW : HIGH);
-      }
-
-      // Measure distance every 50 ms
-      if (currentMillis - previousMillisUltrasonic >= intervalUltrasonic) {
-        previousMillisUltrasonic = currentMillis;
-        digitalWrite(Trig, LOW);
-        delayMicroseconds(5);
-        digitalWrite(Trig, HIGH);
-        delayMicroseconds(10);
-        digitalWrite(Trig, LOW);
-        float EchoTime = pulseIn(Echo, HIGH); //計算傳回時間
-        CMValue = EchoTime / 29.4 / 2; //將時間轉換成距離
-      }
-
-      // Sound buzzer based on distance every 100 ms
-      if (currentMillis - previousMillisBuzzer >= intervalBuzzer) {
-        previousMillisBuzzer = currentMillis;
-        if (CMValue > 100) {
-          tone(buzzer, 523, 100); //警告距離紅燈
-        } else if (CMValue <= 200 && CMValue > 100) {
-          tone(buzzer, 253, 100); //注意距離黃燈
+        // Only consider the motion ended if it lasted for less than 3 seconds
+        if (currentMillis - motionDetectedMillis < delayStartLEDandUltrasonic) {
+          motionDetected = false;
+          Serial.println("無人經過");
+          // Removed the line:
+          // motionEndedMillis = currentMillis; // Record the time when motion ends
         } else {
-          tone(buzzer, 0, 0);
+          motionEndedMillis = currentMillis; // Record the time when motion is no longer detected
+          Serial.println("無人經過");
+          motionDetected = false; // Added this line to reset the motionDetected flag
         }
       }
     }
+  }
+
+  // Button press detection
+  if (buttonState == HIGH && !buttonPressed) {
+    buttonPressed = true;
+    buttonPressedMillis = currentMillis; // Record the time when button is pressed
+    Serial.println("按鈕按下");
+  } else if (buttonState == LOW && buttonPressed) {
+    buttonPressed = false;
+  }
+
+  // Check if motion was detected for over 3 seconds, or if button was pressed within the last 10 seconds
+  bool shouldOperateLEDsAndUltrasonic = false;
+
+  if (buttonPressed ||
+      (motionDetected && (currentMillis - motionDetectedMillis >= delayStartLEDandUltrasonic)) ||
+      (currentMillis - motionEndedMillis < durationLEDandUltrasonic) ||
+      (currentMillis - buttonPressedMillis < durationButtonLEDandUltrasonic)) {
+    shouldOperateLEDsAndUltrasonic = true;
+  }
+
+  if (shouldOperateLEDsAndUltrasonic) {
+    // Toggle LEDs every 250 ms
+    if (currentMillis - previousMillisLED >= intervalLED) {
+      previousMillisLED = currentMillis;
+      ledState = !ledState;
+      Serial.print("LED State: ");
+      Serial.println(ledState);
+      digitalWrite(15, ledState ? HIGH : LOW);
+      digitalWrite(4, ledState ? LOW : HIGH);
+    }
+
+    // Measure distance every 50 ms
+    if (currentMillis - previousMillisUltrasonic >= intervalUltrasonic) {
+      previousMillisUltrasonic = currentMillis;
+      digitalWrite(Trig, LOW);
+      delayMicroseconds(5);
+      digitalWrite(Trig, HIGH);
+      delayMicroseconds(10);
+      digitalWrite(Trig, LOW);
+      float EchoTime = pulseIn(Echo, HIGH); //計算傳回時間
+      CMValue = EchoTime / 29.4 / 2; //將時間轉換成距離
+    }
+
+    // Sound buzzer based on distance every 100 ms
+    if (currentMillis - previousMillisBuzzer >= intervalBuzzer) {
+      previousMillisBuzzer = currentMillis;
+      if (CMValue > 200) {
+        tone(buzzer, 0, 0); // No sound if distance is greater than 200 cm
+      } else if (CMValue <= 200 && CMValue > 100) {
+        tone(buzzer, 253, 100); //警告距離紅燈
+      } else {
+        tone(buzzer, 523, 100); //注意距離黃燈
+      }
+    }
+
+    // Print CMValue every 250 ms
+    if (currentMillis - previousMillisPrint >= intervalPrint) {
+      previousMillisPrint = currentMillis;
+      Serial.println(CMValue);
+    }
   } else {
     // Ensure LEDs are turned off after the duration ends
-    if (currentMillis - motionEndedMillis >= durationLEDandUltrasonic) {
+    if (!motionDetected &&
+        (currentMillis - motionEndedMillis >= durationLEDandUltrasonic) ||
+        (currentMillis - buttonPressedMillis >= durationButtonLEDandUltrasonic)) {
       digitalWrite(15, LOW);
       digitalWrite(4, LOW);
+      ledState = false;
     }
   }
 
