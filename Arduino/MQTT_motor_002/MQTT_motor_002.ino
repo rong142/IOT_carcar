@@ -23,8 +23,8 @@ byte motorSpeed = 255;
 
 
 // ------ 以下修改成你自己的WiFi帳號密碼 ------
-char ssid[] = "C220MIS";
-char password[] = "misc220c220";
+char ssid[] = "Uokio";
+char password[] = "00000000";
 
 // &取紙器=取得變數在記憶體中的位置 *指向氣=指向記憶體開始的位置------ 以下修改成你MQTT設定 ------
 char* MQTTServer = "mqttgo.io";//免註冊MQTT伺服器
@@ -35,8 +35,8 @@ char* MQTTPassword = "";//不須帳密
 char* MQTTSubTopic1_001 = "car/carcar/forward_001";
 char* MQTTSubTopic1_002 = "car/carcar/forward_002";
 //推播主題2:往後
-char* MQTTSubTopic2_001 = "car/carcar/back_001";
-char* MQTTSubTopic2_002 = "car/carcar/back_002";
+//char* MQTTSubTopic2_001 = "car/carcar/back_001";
+//char* MQTTSubTopic2_002 = "car/carcar/back_002";
 //推播主題3:往左
 char* MQTTSubTopic3_001 = "car/carcar/left_001";
 char* MQTTSubTopic3_002 = "car/carcar/left_002";
@@ -44,8 +44,8 @@ char* MQTTSubTopic3_002 = "car/carcar/left_002";
 char* MQTTSubTopic4_001 = "car/carcar/right_001";
 char* MQTTSubTopic4_002 = "car/carcar/right_002";
 //推播主題5:停止
-char* MQTTSubTopic5_001 = "car/carcar/stop_001";
-char* MQTTSubTopic5_002 = "car/carcar/stop_002";
+char* MQTTSubTopic5 = "car/carcar/stop_001";
+//char* MQTTSubTopic5_002 = "car/carcar/stop_002";
 
 //long MQTTLastPublishTime;//此變數用來記錄推播時間
 //long MQTTPublishInterval = 10000;//每10秒推撥一次
@@ -64,10 +64,10 @@ void backward() {  // 馬達轉向：後退
   analogWrite(LEFT_PWM, motorSpeed);
   analogWrite(RIGHT_PWM, motorSpeed);
 
-  MQTTClient.publish(MQTTSubTopic2_002, String(0).c_str());
+//  MQTTClient.publish(MQTTSubTopic2_002, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic3_002, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic4_002, String(0).c_str());
-  MQTTClient.publish(MQTTSubTopic5_002, String(0).c_str());
+  MQTTClient.publish(MQTTSubTopic5, String(0).c_str());
 }
 
 void forward() {  // 馬達轉向：前進
@@ -83,7 +83,7 @@ void forward() {  // 馬達轉向：前進
   MQTTClient.publish(MQTTSubTopic1_002, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic3_002, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic4_002, String(0).c_str());
-  MQTTClient.publish(MQTTSubTopic5_002, String(0).c_str());
+  MQTTClient.publish(MQTTSubTopic5, String(0).c_str());
 
 }
 
@@ -98,9 +98,9 @@ void turnRight() {  // 馬達轉向：右轉
   analogWrite(RIGHT_PWM, 0);
 
   MQTTClient.publish(MQTTSubTopic1_002, String(0).c_str());
-  MQTTClient.publish(MQTTSubTopic2_002, String(0).c_str());
+//  MQTTClient.publish(MQTTSubTopic2_002, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic4_002, String(0).c_str());
-  MQTTClient.publish(MQTTSubTopic5_002, String(0).c_str());
+  MQTTClient.publish(MQTTSubTopic5, String(0).c_str());
 }
 
 void turnLeft() {  // 馬達轉向：左轉
@@ -114,9 +114,9 @@ void turnLeft() {  // 馬達轉向：左轉
   analogWrite(RIGHT_PWM, motorSpeed);
 
   MQTTClient.publish(MQTTSubTopic1_002, String(0).c_str());
-  MQTTClient.publish(MQTTSubTopic2_002, String(0).c_str());
+//  MQTTClient.publish(MQTTSubTopic2_002, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic3_002, String(0).c_str());
-  MQTTClient.publish(MQTTSubTopic5_002, String(0).c_str());
+  MQTTClient.publish(MQTTSubTopic5, String(0).c_str());
 }
 
 void stop() {  // 停止
@@ -130,7 +130,7 @@ void stop() {  // 停止
   analogWrite(RIGHT_PWM, 0);
 
   MQTTClient.publish(MQTTSubTopic1_002, String(0).c_str());
-  MQTTClient.publish(MQTTSubTopic2_002, String(0).c_str());
+//  MQTTClient.publish(MQTTSubTopic2_002, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic3_002, String(0).c_str());
   MQTTClient.publish(MQTTSubTopic4_002, String(0).c_str());
 
@@ -167,15 +167,15 @@ void MQTTConnecte() {
       Serial.println("MQTT已連線");
       //訂閱SubTopic1主題
       MQTTClient.subscribe(MQTTSubTopic1_002);
-      MQTTClient.subscribe(MQTTSubTopic2_002);
+//      MQTTClient.subscribe(MQTTSubTopic2_002);
       MQTTClient.subscribe(MQTTSubTopic3_002);
       MQTTClient.subscribe(MQTTSubTopic4_002);
-      MQTTClient.subscribe(MQTTSubTopic5_002);
+      MQTTClient.subscribe(MQTTSubTopic5);
       MQTTClient.subscribe(MQTTSubTopic1_001);
-      MQTTClient.subscribe(MQTTSubTopic2_001);
+//      MQTTClient.subscribe(MQTTSubTopic2_001);
       MQTTClient.subscribe(MQTTSubTopic3_001);
       MQTTClient.subscribe(MQTTSubTopic4_001);
-      MQTTClient.subscribe(MQTTSubTopic5_001);
+//      MQTTClient.subscribe(MQTTSubTopic5_001);
 
     } else {
       //若連線不成功，則顯示錯誤訊息，並重新連線
@@ -228,11 +228,11 @@ void MQTTCallback(char* topic, byte* payload, unsigned int length) {
     if (payloadString == "1") forward();
     //if (payloadString == "0") stop();
   }
-  if (strcmp(topic, MQTTSubTopic2_002) == 0) {
-    Serial.println("往後：" + payloadString);
-    if (payloadString == "1") backward();
-    //if (payloadString == "0") stop();
-  }
+//  if (strcmp(topic, MQTTSubTopic2_002) == 0) {
+//    Serial.println("往後：" + payloadString);
+//    if (payloadString == "1") backward();
+//    //if (payloadString == "0") stop();
+//  }
   if (strcmp(topic, MQTTSubTopic3_002) == 0) {
     Serial.println("左轉：" + payloadString);
     if (payloadString == "1") turnLeft();
@@ -243,7 +243,7 @@ void MQTTCallback(char* topic, byte* payload, unsigned int length) {
     if (payloadString == "1") turnRight();
     //if (payloadString == "0") stop();
   }
-  if (strcmp(topic, MQTTSubTopic5_002) == 0) {
+  if (strcmp(topic, MQTTSubTopic5) == 0) {
     Serial.println("停止：" + payloadString);
     if (payloadString == "1") stop();
     //if (payloadString == "0") stop();
@@ -253,11 +253,11 @@ void MQTTCallback(char* topic, byte* payload, unsigned int length) {
     if (payloadString == "1") backward();
     //if (payloadString == "0") stop();
   }
-  if (strcmp(topic, MQTTSubTopic2_001) == 0) {
-    Serial.println("MQTTSubTopic2_001：" + payloadString);
-    if (payloadString == "1") backward();
-    //if (payloadString == "0") stop();
-  }
+//  if (strcmp(topic, MQTTSubTopic2_001) == 0) {
+//    Serial.println("MQTTSubTopic2_001：" + payloadString);
+//    if (payloadString == "1") backward();
+//    //if (payloadString == "0") stop();
+//  }
   if (strcmp(topic, MQTTSubTopic3_001) == 0) {
     Serial.println("MQTTSubTopic3_001：" + payloadString);
     if (payloadString == "1") backward();
@@ -268,9 +268,9 @@ void MQTTCallback(char* topic, byte* payload, unsigned int length) {
     if (payloadString == "1") backward();
     //if (payloadString == "0") stop();
   }
-  if (strcmp(topic, MQTTSubTopic5_001) == 0) {
-    Serial.println("MQTTSubTopic5_001：" + payloadString);
-    if (payloadString == "1") stop();
-    //if (payloadString == "0") stop();
-  }
+//  if (strcmp(topic, MQTTSubTopic5_001) == 0) {
+//    Serial.println("MQTTSubTopic5_001：" + payloadString);
+//    if (payloadString == "1") stop();
+//    //if (payloadString == "0") stop();
+//  }
 }
