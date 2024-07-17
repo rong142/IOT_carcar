@@ -28,11 +28,10 @@
 #define PCLK_GPIO_NUM     22
 
 
+const char* ssid     = "Uokio"; // CHANGE HERE
+const char* password = "00000000"; // CHANGE HERE
 
-const char* ssid     = "network-name"; // CHANGE HERE
-const char* password = "network-password"; // CHANGE HERE
-
-const char* websockets_server_host = "192.168.1.149"; //CHANGE HERE
+const char* websockets_server_host = "192.168.137.1"; //CHANGE HERE
 const uint16_t websockets_server_port = 3001; // OPTIONAL CHANGE
 
 camera_fb_t * fb = NULL;
