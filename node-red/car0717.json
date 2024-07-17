@@ -1,0 +1,50 @@
+[
+    {
+        "id": "243b031a71eed097",
+        "type": "ui_button",
+        "z": "bf8e6fd33ce8d816",
+        "name": "",
+        "group": "eec6e2caf548adac",
+        "order": 2,
+        "width": "1",
+        "height": "1",
+        "passthru": false,
+        "label": "左N1",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 320,
+        "wires": [
+            [
+                "16824776c5909b33"
+            ]
+        ]
+    },
+    {
+        "id": "eec6e2caf548adac",
+        "type": "ui_group",
+        "name": "運輸車",
+        "tab": "9e253195.a496a",
+        "order": 7,
+        "disp": true,
+        "width": "7",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9e253195.a496a",
+        "type": "ui_tab",
+        "name": "Tab 1",
+        "icon": "dashboard",
+        "order": 4,
+        "disabled": false,
+        "hidden": false
+    }
+]
