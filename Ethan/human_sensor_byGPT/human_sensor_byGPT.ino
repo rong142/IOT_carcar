@@ -2,6 +2,10 @@ int Trig = 12; //發出聲波腳位
 int Echo = 14; //接收聲波腳位
 int buzzer = 5; //蜂鳴器
 int buttonPin = 18; //按鈕腳位
+#include <Adafruit_NeoPixel.h>
+int NEOPin = 32; // 腳位編號
+int NEONumber = 1; // 燈組的數量（本例只有一顆）
+Adafruit_NeoPixel pixels(NEONumber, NEOPin, NEO_GRB + NEO_KHZ800);
 
 unsigned long previousMillisMotion = 0;
 unsigned long previousMillisLED = 0;
@@ -30,7 +34,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(17, INPUT); // SR-501
   pinMode(15, OUTPUT); // 紅色LED
-  pinMode(4, OUTPUT); // 黃色LED
+  pinMode(4, OUTPUT); // 黃色or藍色LED
+  pinMode(22, OUTPUT);
   pinMode(Trig, OUTPUT);
   pinMode(Echo, INPUT);
   pinMode(buzzer, OUTPUT);
@@ -50,6 +55,8 @@ void loop() {
         motionDetected = true;
         motionDetectedMillis = currentMillis; // Record the time when motion is first detected
       }
+      pixels.setPixelColor(0, pixels.Color(0, 255, 0)); // 綠色
+      pixels.show();
       Serial.println("有人經過");
     } else {
       if (motionDetected) {
@@ -61,6 +68,8 @@ void loop() {
           motionEndedMillis = currentMillis; // Record the time when motion is no longer detected
           Serial.println("無人經過");
           motionDetected = false; // Added this line to reset the motionDetected flag
+          pixels.setPixelColor(0, pixels.Color(0, 0, 0)); // 關閉
+          pixels.show();
         }
       }
     }
@@ -69,10 +78,13 @@ void loop() {
   // Button press detection
   if (buttonState == HIGH && !buttonPressed) {
     buttonPressed = true;
+    pixels.setPixelColor(0, pixels.Color(0, 255, 0)); // 綠色
+    pixels.show();
     buttonPressedMillis = currentMillis; // Record the time when button is pressed
     Serial.println("按鈕按下");
   } else if (buttonState == LOW && buttonPressed) {
     buttonPressed = false;
+
   }
 
   // Check if motion was detected for over 3 seconds, or if button was pressed within the last 10 seconds
@@ -94,6 +106,8 @@ void loop() {
       Serial.println(ledState);
       digitalWrite(15, ledState ? HIGH : LOW);
       digitalWrite(4, ledState ? LOW : HIGH);
+      digitalWrite(22, ledState ? LOW : HIGH);
+
     }
 
     // Measure distance every 50 ms
@@ -132,6 +146,9 @@ void loop() {
         (currentMillis - buttonPressedMillis >= durationButtonLEDandUltrasonic)) {
       digitalWrite(15, LOW);
       digitalWrite(4, LOW);
+      digitalWrite(22, LOW);
+      pixels.setPixelColor(0, pixels.Color(0, 0, 0)); // 關閉
+      pixels.show();
       ledState = false;
     }
   }
