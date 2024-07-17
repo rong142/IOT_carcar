@@ -37,10 +37,10 @@ char cmd;
 //char ssid[] = "C220MIS";
 //char password[] = "misc220c220";
 //webcam寫法
-const char* ssid     = "network-name"; // CHANGE HERE
-const char* password = "network-password"; // CHANGE HERE
+const char* ssid     = "Uokio"; // CHANGE HERE
+const char* password = "00000000"; // CHANGE HERE
 //WebSocket配置
-const char* websockets_server_host = "192.168.1.149"; //CHANGE HERE
+const char* websockets_server_host = "192.168.137.1"; //CHANGE HERE
 const uint16_t websockets_server_port = 3001; // OPTIONAL CHANGE
 
 camera_fb_t * fb = NULL;
@@ -324,16 +324,56 @@ void MQTTCallback(char* topic, byte* payload, unsigned int length) {
     payloadString = payloadString + (char)payload[i];
   }
   Serial.println(payloadString);
-  if (String(topic) == MQTTSubTopic1_001 || String(topic) == MQTTSubTopic1_002) {
-    forward();
-  } else if (String(topic) == MQTTSubTopic2_001 || String(topic) == MQTTSubTopic2_002) {
-    backward();
-  } else if (String(topic) == MQTTSubTopic3_001 || String(topic) == MQTTSubTopic3_002) {
-    turnLeft();
-  } else if (String(topic) == MQTTSubTopic4_001 || String(topic) == MQTTSubTopic4_002) {
-    turnRight();
-  } else if (String(topic) == MQTTSubTopic5_001 || String(topic) == MQTTSubTopic5_002) {
-    stop();
+  //比對主題是否為訂閱主題1
+  if (strcmp(topic, MQTTSubTopic1_001) == 0) {
+    Serial.println("往前：" + payloadString);
+    if (payloadString == "1") forward();
+    //if (payloadString == "0") stop();
+  }
+  if (strcmp(topic, MQTTSubTopic2_001) == 0) {
+    Serial.println("往後：" + payloadString);
+    if (payloadString == "1") backward();
+    //if (payloadString == "0") stop();
+  }
+  if (strcmp(topic, MQTTSubTopic3_001) == 0) {
+    Serial.println("左轉：" + payloadString);
+    if (payloadString == "1") turnLeft();
+    //if (payloadString == "0") stop();
+  }
+  if (strcmp(topic, MQTTSubTopic4_001) == 0) {
+    Serial.println("右轉：" + payloadString);
+    if (payloadString == "1") turnRight();
+    //if (payloadString == "0") stop();
+  }
+  if (strcmp(topic, MQTTSubTopic5_001) == 0) {
+    Serial.println("停止：" + payloadString);
+    if (payloadString == "1") stop();
+    //if (payloadString == "0") stop();
+  }
+  if (strcmp(topic, MQTTSubTopic1_002) == 0) {
+    Serial.println("往前：" + payloadString);
+    if (payloadString == "1") backward();
+    //if (payloadString == "0") stop();
+  }
+  if (strcmp(topic, MQTTSubTopic2_002) == 0) {
+    Serial.println("MQTTSubTopic2_001：" + payloadString);
+    if (payloadString == "1") backward();
+    //if (payloadString == "0") stop();
+  }
+  if (strcmp(topic, MQTTSubTopic3_002) == 0) {
+    Serial.println("MQTTSubTopic3_001：" + payloadString);
+    if (payloadString == "1") backward();
+    //if (payloadString == "0") stop();
+  }
+  if (strcmp(topic, MQTTSubTopic4_002) == 0) {
+    Serial.println("MQTTSubTopic4_001：" + payloadString);
+    if (payloadString == "1") backward();
+    //if (payloadString == "0") stop();
+  }
+  if (strcmp(topic, MQTTSubTopic5_002) == 0) {
+    Serial.println("MQTTSubTopic5_001：" + payloadString);
+    if (payloadString == "1") stop();
+    //if (payloadString == "0") stop();
   }
 }
 
