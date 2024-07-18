@@ -5,8 +5,8 @@
 Adafruit_MPU6050 mpu;
 
 // 定义ESP32上的SDA和SCL引脚
-#define SDA_PIN 39
-#define SCL_PIN 36
+#define SDA_PIN 21
+#define SCL_PIN 22
 
 void setup() {
   // 初始化I2C通信，使用指定的SDA和SCL引脚
@@ -18,7 +18,7 @@ void setup() {
   if (!mpu.begin()) {
     Serial.println("Could not find a valid MPU6050 sensor, check wiring!");
     while (1) {
-      delay(500);
+      delay(20);
     }
   }
 
@@ -82,5 +82,5 @@ void loop() {
   Serial.print("      ");  
   Serial.println(gyro.gyro.z);
   
-  delay(1000);
+  delay(20);
 }
