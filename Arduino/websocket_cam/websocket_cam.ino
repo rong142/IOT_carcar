@@ -7,6 +7,7 @@
 #include "soc/soc.h" //disable brownout problems
 #include "soc/rtc_cntl_reg.h" //disable brownout problems
 #include "driver/gpio.h"
+#include "Base64.h" // 引入Base64編碼庫
 
 // configuration for AI Thinker Camera board
 #define PWDN_GPIO_NUM     32
@@ -29,11 +30,15 @@
 const char* ssid     = "Uokio"; // CHANGE HERE
 const char* password = "00000000"; // CHANGE HERE
 
-const char* websockets_server_host = "websocket.icelike.info"; // WebSocket server address
-const uint16_t websockets_server_port = 8080; // WebSocket server port
-bool connected = false;
+const char* websockets_server_host = "websocket.icelike.info"; // WebSocket伺服器位址
+const uint16_t websockets_server_port = 8080; // WebSocket伺服器端口
+String message;
+bool connected;
 
 camera_fb_t * fb = NULL;
+size_t _jpg_buf_len = 0;
+uint8_t * _jpg_buf = NULL;
+uint8_t state = 0;
 
 using namespace websockets;
 WebsocketsClient client;
@@ -67,8 +72,8 @@ esp_err_t init_camera() {
   config.pixel_format = PIXFORMAT_JPEG;
 
   // parameters for image quality and size
-  config.frame_size = FRAMESIZE_QVGA; // Reduced frame size
-  config.jpeg_quality = 20; // Reduced quality
+  config.frame_size = FRAMESIZE_VGA; // FRAMESIZE_ + QVGA|CIF|VGA|SVGA|XGA|SXGA|UXGA
+  config.jpeg_quality = 15; //10-63 lower number means higher quality
   config.fb_count = 2;
 
   // Camera init
@@ -78,7 +83,7 @@ esp_err_t init_camera() {
     return err;
   }
   sensor_t * s = esp_camera_sensor_get();
-  s->set_framesize(s, FRAMESIZE_QVGA); // Set frame size
+  s->set_framesize(s, FRAMESIZE_VGA);
   Serial.println("camera init OK");
   return ESP_OK;
 }
@@ -98,6 +103,10 @@ esp_err_t init_wifi() {
   if (!connected) {
     Serial.println("WS connect failed!");
     Serial.println(WiFi.localIP());
+    state = 3;
+    return ESP_FAIL;
+  }
+  if (state == 3) {
     return ESP_FAIL;
   }
 
@@ -118,20 +127,28 @@ void setup() {
 
 void loop() {
   if (connected) {
-    camera_fb_t *fb = esp_camera_fb_get();
-    if (!fb) {
-      Serial.println("img capture failed");
-      esp_camera_fb_return(fb);
-      ESP.restart();
-    }
+    if (client.available()) {
+      camera_fb_t *fb = esp_camera_fb_get();
+      if (!fb) {
+        Serial.println("img capture failed");
+        esp_camera_fb_return(fb);
+        ESP.restart();
+      }
 
-    // Send raw image data
-    client.sendBinary((const char*)fb->buf, fb->len);
-    Serial.println("image sent");
-    esp_camera_fb_return(fb);
-    client.poll();
+      // Base64 encode the image
+      String encoded = base64::encode((const unsigned char*)fb->buf, fb->len);
+
+      // Create JSON object
+      String json = "{\"event\":\"image\",\"image\":\"" + encoded + "\"}";
+
+      // Send JSON object via WebSocket
+      client.send(json);
+      Serial.println("image sent");
+      esp_camera_fb_return(fb);
+      client.poll();
+    }
   } else {
-    init_wifi(); // Attempt to reconnect if not connected
+    websocket_connect(); // 若是沒有連接到WS嘗試重新連線
   }
 }
 
