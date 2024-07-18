@@ -33,7 +33,7 @@ char* MQTTUser = "";//不須帳密
 char* MQTTPassword = "";//不須帳密
 //推播主題1:往前
 char* MQTTSubTopic1_001 = "car/carcar/forward_001";
-char* MQTTSubTopic1_02 = "car/carcar/forward_002";
+char* MQTTSubTopic1_002 = "car/carcar/forward_002";
 //推播主題2:往後
 //char* MQTTSubTopic2_001 = "car/carcar/back_001";
 //char* MQTTSubTopic2_002 = "car/carcar/back_002";
