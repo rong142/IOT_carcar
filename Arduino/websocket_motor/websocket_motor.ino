@@ -36,8 +36,8 @@ void setup() {
   digitalWrite(LEFT2, LOW);
   digitalWrite(RIGHT1, HIGH);
   digitalWrite(RIGHT2, LOW);
-  analogWrite(LEFT_PWM, motorSpeed);
-  analogWrite(RIGHT_PWM, motorSpeed);
+  analogWrite(LEFT_PWM, 0);
+  analogWrite(RIGHT_PWM, 0);
 
   websocket_connet();
 }
