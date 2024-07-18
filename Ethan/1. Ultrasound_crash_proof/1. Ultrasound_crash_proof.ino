@@ -65,7 +65,7 @@ void loop() {
 
       // Update the RGB LED
       if (purpleState) {
-        analogWrite(16, 255);
+        analogWrite(16, 240);
         analogWrite(17, 32);
         analogWrite(18, 160);
       } else {
