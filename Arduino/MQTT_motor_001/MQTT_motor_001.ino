@@ -1,6 +1,3 @@
-// 接收序列埠值的變數
-char cmd;
-
 #include <WiFi.h>
 #include <PubSubClient.h> //請先安裝PubSubClient程式庫
 
