@@ -1,0 +1,53 @@
+html {
+  font-size: 14px;
+}
+
+body {
+  font-family: var(--font-family);
+  font-weight: normal;
+  /* background: var(--surface-ground); */
+  background-color: gray;
+  color: var(--text-color);
+  padding: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.card {
+  /* background: var(--surface-card); */
+  background-color: lightgray;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.button {
+  background: cornflowerblue;
+  color: black;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16pt;
+  margin: 0.5rem;
+  box-shadow: 2px;
+}
+
+.homecard {
+  min-width: 300px;
+  max-width: 300px;
+  display: block;
+  justify-items: center;
+  text-align: center;
+  margin: 1rem;
+}
+
+.image {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 10px;
+}

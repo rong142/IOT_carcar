@@ -42,7 +42,6 @@ const char* password = "00000000"; // CHANGE HERE
 //WebSocket配置
 const char* websockets_server_host = "192.168.137.1"; //CHANGE HERE
 const uint16_t websockets_server_port = 3001; // OPTIONAL CHANGE
-print("Hello!");
 camera_fb_t * fb = NULL;
 size_t _jpg_buf_len = 0;
 uint8_t * _jpg_buf = NULL;
