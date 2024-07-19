@@ -6,8 +6,8 @@ char ssid[] = "C220MIS";
 char password[] = "misc220c220";
 int Trig = 12;
 int Echo = 14;
-int buzzer = 5;
-int buttonPin = 18;
+int buzzer = 2;
+int buttonPin = 33;
 int NEOPin = 32;
 int NEONumber = 1;
 Adafruit_NeoPixel pixels(NEONumber, NEOPin, NEO_GRB + NEO_KHZ800);
@@ -51,10 +51,9 @@ bool ultrasonicActive = false;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(17, INPUT); // PIR Sensor
+  pinMode(4, INPUT); // PIR Sensor
   pinMode(15, OUTPUT); // Red LED
-  pinMode(4, OUTPUT); // Yellow or Blue LED
-  pinMode(22, OUTPUT);
+  pinMode(13, OUTPUT);// Blue & Yellow LED
   pinMode(Trig, OUTPUT);
   pinMode(Echo, INPUT);
   pinMode(buzzer, OUTPUT);
@@ -69,7 +68,7 @@ void setup() {
 
 void loop() {
   unsigned long currentMillis = millis();
-  int value = digitalRead(17);
+  int value = digitalRead(4);
   int buttonState = digitalRead(buttonPin);
 
   if (currentMillis - previousMillisMotion >= intervalMotion) {
@@ -131,8 +130,7 @@ void loop() {
       Serial.print("LED State: ");
       Serial.println(ledState);
       digitalWrite(15, ledState ? HIGH : LOW);
-      digitalWrite(4, ledState ? LOW : HIGH);
-      digitalWrite(22, ledState ? LOW : HIGH);
+      digitalWrite(13, ledState ? LOW : HIGH);
     }
 
     if (currentMillis - previousMillisUltrasonic >= intervalUltrasonic) {
@@ -166,8 +164,7 @@ void loop() {
         (currentMillis - motionEndedMillis >= durationLEDandUltrasonic) ||
         (currentMillis - buttonPressedMillis >= durationButtonLEDandUltrasonic)) {
       digitalWrite(15, LOW);
-      digitalWrite(4, LOW);
-      digitalWrite(22, LOW);
+      digitalWrite(13, LOW);
       pixels.setPixelColor(0, pixels.Color(0, 0, 0)); // Off
       pixels.show();
       ledState = false;
