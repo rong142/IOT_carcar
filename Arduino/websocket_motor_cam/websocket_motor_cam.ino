@@ -37,15 +37,21 @@ const byte RIGHT_PWM = 12;
 // Motor speed
 byte motorSpeed = 255;
 
+//const char* ssid = "NKUST"; // WiFi credentials
+//const char* password = "s0973901050"; // WiFi password
 const char* ssid = "Uokio"; // WiFi credentials
 const char* password = "00000000"; // WiFi password
-const char* websockets_server_host = "websocket.icelike.info"; // WebSocket server address
-const uint16_t websockets_server_port = 8080; // WebSocket server port
+const char* camera_server_host = "websocket.icelike.info"; // WebSocket server address for camera
+const uint16_t camera_server_port = 8090; // WebSocket server port for camera
+const char* control_server_host = "websocket.icelike.info"; // WebSocket server address for motor control
+const uint16_t control_server_port = 8080; // WebSocket server port for motor control
 
 using namespace websockets;
-WebsocketsClient client;
+WebsocketsClient camera_client; // Client for sending camera data
+WebsocketsClient control_client; // Client for receiving motor control commands
 String message; // To store received WebSocket messages
-bool connected = false; // To keep track of WebSocket connection status
+bool camera_connected = false; // To keep track of camera WebSocket connection status
+bool control_connected = false; // To keep track of control WebSocket connection status
 
 // Function to initialize the camera
 esp_err_t init_camera() {
@@ -86,7 +92,7 @@ esp_err_t init_camera() {
   return ESP_OK;
 }
 
-// Function to initialize WiFi and WebSocket connection
+// Function to initialize WiFi and WebSocket connections
 esp_err_t init_wifi() {
   WiFi.begin(ssid, password);
   Serial.println("Wifi init ");
@@ -96,42 +102,56 @@ esp_err_t init_wifi() {
   }
   Serial.println("");
   Serial.println("WiFi OK");
-  Serial.println("connecting to WS: ");
-  client.onMessage([&](WebsocketsMessage msg) {
-    Serial.print("Got Message: ");
+
+  // Initialize WebSocket clients
+  camera_client.onMessage([](WebsocketsMessage msg) {
+    Serial.print("Camera WS Message: ");
+    Serial.println(msg.data());
+  });
+  camera_connected = camera_client.connect(camera_server_host, camera_server_port, "/");
+  if (!camera_connected) {
+    Serial.println("Camera WS connect failed!");
+    return ESP_FAIL;
+  }
+  Serial.println("Camera WS OK");
+  camera_client.send("hello from ESP32 camera stream!");
+
+  control_client.onMessage([&](WebsocketsMessage msg) {
+    Serial.print("Control WS Message: ");
     Serial.println(msg.data());
     message = msg.data(); // Store the received message
   });
-  connected = client.connect(websockets_server_host, websockets_server_port, "/");
-  if (!connected) {
-    Serial.println("WS connect failed!");
-    Serial.println(WiFi.localIP());
+  control_connected = control_client.connect(control_server_host, control_server_port, "/");
+  if (!control_connected) {
+    Serial.println("Control WS connect failed!");
     return ESP_FAIL;
   }
-  Serial.println("WS OK");
-  client.send("hello from ESP32 camera stream!");
+  Serial.println("Control WS OK");
+  control_client.send("Hello Server");
+
   return ESP_OK;
 }
 
 // Function to reconnect to WebSocket if needed
 void websocket_connect() {
-  WiFi.begin(ssid, password);
-  for (int i = 0; i < 10 && WiFi.status() != WL_CONNECTED; i++) {
-    Serial.print(".");
-    delay(1000);
+  if (!camera_connected) {
+    camera_connected = camera_client.connect(camera_server_host, camera_server_port, "/");
+    if (camera_connected) {
+      Serial.println("Camera WS Reconnected!");
+      camera_client.send("Hello Server");
+    } else {
+      Serial.println("Camera WS Reconnect failed!");
+    }
   }
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("未連接到WiFi！");
-    ESP.restart(); // ESP32 reboot
-    return;
-  }
-  Serial.println("已連接到WiFi，正在連接到伺服器。");
-  connected = client.connect(websockets_server_host, websockets_server_port, "/");
-  if (connected) {
-    Serial.println("已連接！");
-    client.send("Hello Server");
-  } else {
-    Serial.println("未連接！");
+
+  if (!control_connected) {
+    control_connected = control_client.connect(control_server_host, control_server_port, "/");
+    if (control_connected) {
+      Serial.println("Control WS Reconnected!");
+      control_client.send("Hello Server");
+    } else {
+      Serial.println("Control WS Reconnect failed!");
+    }
   }
 }
 
@@ -192,7 +212,7 @@ void setup() {
 
   // Initialize camera
   init_camera();
-  
+
   // Initialize motor pins
   pinMode(LEFT1, OUTPUT);
   pinMode(LEFT2, OUTPUT);
@@ -213,7 +233,7 @@ void setup() {
 }
 
 void loop() {
-  if (connected) {
+  if (camera_connected) {
     // Capture and send image
     camera_fb_t *fb = esp_camera_fb_get();
     if (!fb) {
@@ -221,11 +241,15 @@ void loop() {
       esp_camera_fb_return(fb);
       ESP.restart();
     } else {
-      client.sendBinary((const char*)fb->buf, fb->len);
+      camera_client.sendBinary((const char*)fb->buf, fb->len);
       Serial.println("image sent");
       esp_camera_fb_return(fb);
     }
+  } else {
+    websocket_connect(); // Reconnect if not connected
+  }
 
+  if (control_connected) {
     // Process received WebSocket messages
     if (message == "up") forward();
     if (message == "down") backward();
@@ -233,7 +257,7 @@ void loop() {
     if (message == "right") turnRight();
     if (message == "pause") stop();
 
-    client.poll(); // Poll WebSocket
+    control_client.poll(); // Poll WebSocket
   } else {
     websocket_connect(); // Reconnect if not connected
   }
