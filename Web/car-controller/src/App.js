@@ -109,7 +109,7 @@ function App() {
       console.log('init');
       first.current = true;
 
-      ws_controller.current = new WebSocket('ws://websocket.icelike.info:8080');
+      ws_controller.current = new WebSocket('ws://192.168.137.1:8080');
       ws_controller.current.onopen = () => {
         console.log('open connection');
         ws_controller_connected.current = true;
@@ -119,7 +119,7 @@ function App() {
         ws_controller_connected.current = false;
       }
 
-      ws_image.current = new WebSocket('ws://websocket.icelike.info:8090');
+      ws_image.current = new WebSocket('ws://192.168.137.1:8090');
       ws_image.current.onopen = () => {
         console.log('open connection');
         ws_image_connected.current = true;
