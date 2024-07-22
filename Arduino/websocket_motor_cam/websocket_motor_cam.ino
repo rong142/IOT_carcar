@@ -41,9 +41,9 @@ byte motorSpeed = 255;
 //const char* password = "s0973901050"; // WiFi password
 const char* ssid = "Uokio"; // WiFi credentials
 const char* password = "00000000"; // WiFi password
-const char* camera_server_host = "192.168.137.1"; // WebSocket server address for camera
+const char* camera_server_host = "192.168.3.4"; // WebSocket server address for camera
 const uint16_t camera_server_port = 8090; // WebSocket server port for camera
-const char* control_server_host = "192.168.137.1"; // WebSocket server address for motor control
+const char* control_server_host = "192.168.3.4"; // WebSocket server address for motor control
 const uint16_t control_server_port = 8080; // WebSocket server port for motor control
 
 using namespace websockets;
@@ -77,7 +77,7 @@ esp_err_t init_camera() {
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
   config.frame_size = FRAMESIZE_QVGA; // Lower resolution
-  config.jpeg_quality = 12; // Lower quality
+  config.jpeg_quality = 5; // Lower quality
   config.fb_count = 2;
 
   // Initialize the camera
