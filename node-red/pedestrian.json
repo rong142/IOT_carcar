@@ -1,5 +1,110 @@
 [
     {
+        "id": "8b2b46189489d0c0",
+        "type": "tab",
+        "label": "Pedestrian",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "087fc1ffc579a1b3",
+        "type": "mqtt in",
+        "z": "8b2b46189489d0c0",
+        "name": "",
+        "topic": "3th4n/road222/ped",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "43c66eebfa805d10",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "10140643b5404609",
+                "374610bf4cabac93",
+                "0120a71a31738df0"
+            ]
+        ]
+    },
+    {
+        "id": "239515e732323777",
+        "type": "debug",
+        "z": "8b2b46189489d0c0",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 420,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "10140643b5404609",
+        "type": "debug",
+        "z": "8b2b46189489d0c0",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 420,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "d2ec7348f2c22a8b",
+        "type": "mqtt in",
+        "z": "8b2b46189489d0c0",
+        "name": "",
+        "topic": "3th4n/road222/car",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "43c66eebfa805d10",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 220,
+        "wires": [
+            [
+                "239515e732323777",
+                "4764de3f91c6c99d",
+                "0120a71a31738df0"
+            ]
+        ]
+    },
+    {
+        "id": "8b2282488dc1e16a",
+        "type": "mqtt out",
+        "z": "8b2b46189489d0c0",
+        "name": "",
+        "topic": "3th4n/road222/button",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "43c66eebfa805d10",
+        "x": 460,
+        "y": 360,
+        "wires": []
+    },
+    {
         "id": "4764de3f91c6c99d",
         "type": "ui_chart",
         "z": "8b2b46189489d0c0",
@@ -38,10 +143,237 @@
         "useDifferentColor": false,
         "className": "",
         "x": 410,
-        "y": 180,
+        "y": 220,
         "wires": [
             []
         ]
+    },
+    {
+        "id": "3ea923e23ac84eb1",
+        "type": "ui_button",
+        "z": "8b2b46189489d0c0",
+        "name": "",
+        "group": "1396a74111625f24",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "button start",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "str",
+        "topic": "3th4n/road222/button",
+        "topicType": "msg",
+        "x": 130,
+        "y": 360,
+        "wires": [
+            [
+                "8b2282488dc1e16a"
+            ]
+        ]
+    },
+    {
+        "id": "374610bf4cabac93",
+        "type": "ui_text",
+        "z": "8b2b46189489d0c0",
+        "group": "247590a338c7bda4",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "individual detection",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 450,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "4ecea037f750f2a5",
+        "type": "mqtt in",
+        "z": "8b2b46189489d0c0",
+        "name": "",
+        "topic": "3th4n/road222/image",
+        "qos": "0",
+        "datatype": "buffer",
+        "broker": "43c66eebfa805d10",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 460,
+        "wires": [
+            [
+                "e0b7e9d47c73bbe7"
+            ]
+        ]
+    },
+    {
+        "id": "4efa43f4ea2a0f5f",
+        "type": "ui_template",
+        "z": "8b2b46189489d0c0",
+        "group": "1396a74111625f24",
+        "name": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "format": "<img width=\"100%\" height=\"100%\" src=\"{{msg.payload}}\"/>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 620,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e0b7e9d47c73bbe7",
+        "type": "function",
+        "z": "8b2b46189489d0c0",
+        "name": "function image",
+        "func": "msg.payload = 'data:image/jpeg;base64,' + msg.payload.toString('base64');\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 460,
+        "wires": [
+            [
+                "4efa43f4ea2a0f5f"
+            ]
+        ]
+    },
+    {
+        "id": "447e5a622b1aef02",
+        "type": "function",
+        "z": "8b2b46189489d0c0",
+        "name": "function csv",
+        "func": "var ped = msg.payload['3th4n/road222/ped'];\nvar car = msg.payload['3th4n/road222/car'];\n\n// 檢查car的值是否為'off'\nif (car !== \"off\") {\n    var csv = `ped,car\\n${ped},${car}\\n`;\n    msg.payload = csv;\n    return msg;\n} else {\n    // 如果car的值為'off'，則不傳輸CSV檔\n    return null;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 160,
+        "wires": [
+            [
+                "54a731bca0bc5d9d"
+            ]
+        ]
+    },
+    {
+        "id": "54a731bca0bc5d9d",
+        "type": "file",
+        "z": "8b2b46189489d0c0",
+        "name": "car stat",
+        "filename": "C:\\Users\\USER\\Desktop\\Arduino\\pedestrian_MQTT_revised_pin_camera\\car_stat.csv",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "utf8",
+        "x": 720,
+        "y": 160,
+        "wires": [
+            [
+                "c72d3a8c0921105d"
+            ]
+        ]
+    },
+    {
+        "id": "c72d3a8c0921105d",
+        "type": "debug",
+        "z": "8b2b46189489d0c0",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "0120a71a31738df0",
+        "type": "join",
+        "z": "8b2b46189489d0c0",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": true,
+        "timeout": "",
+        "count": "1",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 370,
+        "y": 160,
+        "wires": [
+            [
+                "447e5a622b1aef02"
+            ]
+        ]
+    },
+    {
+        "id": "43c66eebfa805d10",
+        "type": "mqtt-broker",
+        "name": "mqtt_3th4n",
+        "broker": "mqttgo.io",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
     },
     {
         "id": "247590a338c7bda4",
@@ -49,6 +381,17 @@
         "name": "Pedestrian",
         "tab": "1c9b6dd60618dab2",
         "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "1396a74111625f24",
+        "type": "ui_group",
+        "name": "Remote button",
+        "tab": "1c9b6dd60618dab2",
+        "order": 2,
         "disp": true,
         "width": "6",
         "collapse": false,
