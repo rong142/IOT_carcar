@@ -42,9 +42,9 @@ byte motorSpeed = 255;
 const char* ssid = "Uokio"; // WiFi credentials
 const char* password = "00000000"; // WiFi password
 const char* camera_server_host = "192.168.3.4"; // WebSocket server address for camera
-const uint16_t camera_server_port = 8090; // WebSocket server port for camera
+const uint16_t camera_server_port = 9090; // WebSocket server port for camera
 const char* control_server_host = "192.168.3.4"; // WebSocket server address for motor control
-const uint16_t control_server_port = 8080; // WebSocket server port for motor control
+const uint16_t control_server_port = 9080; // WebSocket server port for motor control
 
 using namespace websockets;
 WebsocketsClient camera_client; // Client for sending camera data
