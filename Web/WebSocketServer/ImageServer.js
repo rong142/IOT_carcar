@@ -5,9 +5,9 @@ const ServerSocket = require('ws').Server   // 引用 Server
 const WebSocket = require('ws');
 
 // 指定一個 port
-const PORT = 8090
+const PORT = 9090
 
-// 建立 express 物件並用來監聽 8090 port
+// 建立 express 物件並用來監聽 9090 port
 const server = express()
     .listen(PORT, () => console.log(`[Server] Listening on https://localhost:${PORT}`))
 
