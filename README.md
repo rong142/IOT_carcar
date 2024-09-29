@@ -7,7 +7,7 @@
 
 https://www.youtube.com/watch?v=HCwjJNgR1QY
 
-https://github.com/user-attachments/assets/76424084-b2a5-406a-9d01-6a1d65962dd7
+https://github.com/user-attachments/assets/57641af9-c26c-4a5c-90f1-13bc8e73f7a2
 
 ![image](https://github.com/rong142/IOT_carcar/blob/main/img%26video/image.png)
 
