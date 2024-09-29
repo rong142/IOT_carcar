@@ -3,7 +3,6 @@
 #2024 產業新尖兵-AI物聯網大數據  
 
 組長：黃柏凱  
-
 組員：徐敏容、簡言蓁、林兪丞、馮棋森  
 
 https://www.youtube.com/watch?v=HCwjJNgR1QY
